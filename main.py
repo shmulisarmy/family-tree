@@ -7,10 +7,14 @@ from fastapi import FastAPI, HTTPException, WebSocket, Request, Response, WebSoc
 from fastapi.responses import HTMLResponse
 from fastapi.routing import APIRouter
 from pydantic import BaseModel
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+
 
 from dbLiveStore import DbLiveStore
 from query import Query
 
+templates = Jinja2Templates(directory="frontend/dist")   
 
 
 
@@ -48,6 +52,10 @@ async def setInterval(callback: Callable, interval: int, func_is_async: bool = F
 app = FastAPI()
 
 
+
+app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
+
+
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
@@ -67,7 +75,9 @@ async def get_schema():
 @app.get("/fuck-deprecated")
 async def fuck():
     return "i dont give a fuck"
-
+@app.get("/")
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
     
 
@@ -135,8 +145,10 @@ async def websocket_endpoint(websocket: WebSocket):
         await playerCountSignal.set(lambda v: v - 1)
 
 port = 8080
-from generate_ts_types import place_ts_in_file
-place_ts_in_file(app.openapi(), str(port))
+inDev = False
+if inDev:
+    from generate_ts_types import place_ts_in_file
+    place_ts_in_file(app.openapi(), str(port))
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run('main:app', host="0.0.0.0", port=port, reload=True)

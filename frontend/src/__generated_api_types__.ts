@@ -1,6 +1,7 @@
 
 // API Utils
-const baseUrl = 'http://localhost:8080';
+// const baseUrl = 'http://localhost:8080';
+const baseUrl = '';
 
 
 function toQueryParams(params: Record<string, string>): string {
@@ -57,11 +58,11 @@ export interface ValidationError {
     'get': createFetch<any>({method: 'get', path: '/docs2'})},
   'fuck-deprecated': {
     'get': createFetch<any>({method: 'get', path: '/fuck-deprecated'})},
+  '': {
+    'get': createFetch<any>({method: 'get', path: '/'})},
   'people': {
     'name': {
       'put': createFetch<UpdateNamePayload>({method: 'put', path: '/people/name'})},
   '': {
-      'get': createFetch<any>({method: 'get', path: '/people/'})}},
-  '': {
-    'get': createFetch<any>({method: 'get', path: '/'})}}
+      'get': createFetch<any>({method: 'get', path: '/people/'})}}}
     
